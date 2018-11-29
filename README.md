@@ -41,3 +41,6 @@ Methods:
     }
     ```
 * DELETE "/users/id"
+
+Many thanks to @adnanrahic
+[Initial code from here](https://github.com/adnanrahic/nodejs-restful-api)
