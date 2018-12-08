@@ -8,11 +8,12 @@ var User = require('./User');
 
 // CREATES A NEW USER
 router.post('/', function (req, res) {
+    console.log(req.body);
     User.create({
             name : req.body.name,
             email : req.body.email,
-            work : req.body.work,
-            specialty: req.body.specialty,
+            // work : req.body.work,
+            // specialty: req.body.specialty,
             password : req.body.password
         }, 
         function (err, user) {
@@ -26,13 +27,40 @@ router.get('/api', function (req, res) {
     res.status(200).send("Hi api is here");
 });
 
-// RETURNS ALL THE USERS IN THE DATABASE
-// router.get('/', function (req, res) {
-//     User.find({}, function (err, users) {
-//         if (err) return res.status(500).send("There was a problem finding the users.");
-//         res.status(200).send(users);
-//     });
+// GETS A SINGLE USER FROM THE DATABASE
+router.post('/session', function (req, res) {
+    User.findOne({ name: req.body.name }, 'name email work specialty').lean().exec(function (err, user) {
+        if (err){ 
+            console.log("err")
+            return res.status(500).send("There was a problem finding the user.");
+        }
+        if (!user) return res.status(404).send("No user found.");
+        res.status(200).send({user_id: user._id});
+    });
+});
+
+// router.post('/session', function(req, res) {
+//     console.log("sess ",req.body)
+//     User.findOne({ name: req.body.name }, function(user) {
+//         console.log("in sess ",user)
+//         if (user && user.authenticate(req.body.password)) {
+//         req.session.id = user.id;
+//         res.status(200).send(req.session.id);
+//         res.redirect('/');
+//         } else {
+//         // TODO: Show error
+//         res.status(404).send("not found")
+//         }
+//     }); 
 // });
+
+// RETURNS ALL THE USERS IN THE DATABASE
+router.get('/', function (req, res) {
+    User.find({}, function (err, users) {
+        if (err) return res.status(500).send("There was a problem finding the users.");
+        res.status(200).send(users);
+    });
+});
 
 // GETS A SINGLE USER FROM THE DATABASE
 router.get('/:id', function (req, res) {
@@ -60,5 +88,49 @@ router.put('/:id', function (req, res) {
     });
 });
 
+
+
+router.get('/session/new', function(req, res) {
+    res.render('session/new.jade', {
+        locals: { user: new User() }
+    });
+});
+
+// router.post('/session', function(req, res) {
+//     console.log("sess ",req.body)
+//     User.findOne({ name: req.body.name }, function(user) {
+//         console.log("in sess ",user)
+//         if (user && user.authenticate(req.body.password)) {
+//         req.session.id = user.id;
+//         res.status(200).send(req.session.id);
+//         res.redirect('/');
+//         } else {
+//         // TODO: Show error
+//         res.status(404).send("not found")
+//         }
+//     }); 
+// });
+
+function loadUser(req, res, next) {
+    if (req.session.id) {
+        User.findById(req.session.id, function(user) {
+            if (user) {
+                req.currentUser = user;
+                next();
+            } else {
+                res.redirect('/session/new');
+            }
+        });
+    } else {
+        res.redirect('/session/new');
+    }
+}
+
+router.delete('/session', loadUser, function(req, res) {
+    if (req.session) {
+        req.session.destroy(function() {});
+    }
+    res.redirect('/session/new');
+});
 
 module.exports = router;

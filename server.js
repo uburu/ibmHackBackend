@@ -4,3 +4,71 @@ var port = process.env.PORT || 3000;
 var server = app.listen(port, function() {
   console.log('Express server listening on port ' + port);
 });
+
+/*jslint nodejs: true*/
+
+// 'use strict';
+
+// var bodyParser = require('body-parser');
+
+// var express = require('express'),
+//     cors = require('cors'),
+//     port = process.env.PORT || 3000,
+//     app = express();
+
+// app.use(bodyParser.json());
+// /* -------------------------------------------------------------------------- */
+
+// app.get('/no-cors', function(req, res){
+//   res.json({
+//     text: 'You should not see this via a CORS request.'
+//   });
+// });
+
+// /* -------------------------------------------------------------------------- */
+
+// app.get('/simple-cors', cors(), function(req, res){
+//   res.json({
+//     text: 'Simple CORS requests are working. [GET]'
+//   });
+// });
+// app.head('/simple-cors', cors(), function(req, res){
+//   res.send(204);
+// });
+// app.post('/kek', cors(), function(req, res){
+//   console.log("simple ", req.body)
+//   res.json({
+//     text: 'Simple CORS requests are working. [POST]'
+//   });
+// });
+
+// /* -------------------------------------------------------------------------- */
+
+// app.options('/complex-cors', cors());
+// app.del('/complex-cors', cors(), function(req, res){
+//   res.json({
+//     text: 'Complex CORS requests are working. [DELETE]'
+//   });
+// });
+
+// /* -------------------------------------------------------------------------- */
+
+// var issue2options = {
+//   origin: true,
+//   methods: ['POST'],
+//   credentials: true,
+//   maxAge: 3600
+// };
+// app.options('/users', cors(issue2options));
+// app.post('/users', cors(issue2options), function(req, res){
+//   console.log("issue ", req.body)
+//   res.json({
+//     text: 'Issue #2 is fixed.'
+//   });
+// });
+
+// if(!module.parent){
+//   app.listen(port, function(){
+//     console.log('Express server listening on port ' + port + '.');
+//   });
+// }
